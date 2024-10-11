@@ -8,7 +8,7 @@ class Truck:
         self.speed = speed
         self.packages = []
         self.current_location = "HUB"
-        self.milage = 0.0
+        self.mileage = 0.0
         self.current_time = start_time
         self.available_time = start_time
 
