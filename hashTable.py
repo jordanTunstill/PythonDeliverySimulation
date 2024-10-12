@@ -1,21 +1,37 @@
 class HashTable:
 #initializes the hash table object
-    def __init__(self, size):
-        self.size = size
+    def __init__(self, initial_size=8):
+        self.size = initial_size
+        self.count = 0
         self.table = [[] for _ in range(self.size)]
+        self.load_factor_threshold = 0.7
 
 #generates the hash index for the given key
     def _hash(self, key):
         return hash(key) % self.size
 
+#resizes the hash index as needed
+    def _resize(self, new_size):
+        old_table = self.table
+        self.size = new_size
+        self.table = [[] for _ in range(self.size)]
+        self.count = 0
+        for bucket in old_table:
+            for key, value in bucket:
+                self.insert(key, value)
+
 #inserts the key pair into the hash table
     def insert(self, key, value):
+        if self.count / self.size >= self.load_factor_threshold:
+            self._resize(self.size * 2)
+
         hash_index = self._hash(key)
         for item in self.table[hash_index]:
             if item[0] == key:
                 item[1] = value
                 return
         self.table[hash_index].append([key, value])
+        self.count += 1
 
 #retrieves the value associated with the given key
     def lookup(self, key):
@@ -31,6 +47,7 @@ class HashTable:
         for i, item in enumerate(self.table[hash_index]):
             if item[0] == key:
                 del self.table[hash_index][i]
+                self.count -= 1
                 return True
         return False
 
