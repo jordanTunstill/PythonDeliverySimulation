@@ -1,13 +1,10 @@
 # Jordan Tunstill - 012227272 - jtuns18@wgu.edu
-
 from datetime import datetime, timedelta
 from hashTable import HashTable
 from package import Package
 from truck import Truck
 from loader import load_package_data, load_distance_data
 from deliveryAlgorithm import deliver_packages
-
-def load
 
 def initialize_trucks(start_time):
     truck1 = Truck(1, 16, 18, start_time)
@@ -16,16 +13,21 @@ def initialize_trucks(start_time):
     return [truck1, truck2, truck3]
 
 def load_trucks(trucks, package_table):
-    # I will manually load the trucks here
+# I will manually load the trucks here
     pass
 
 def deliver_packages(trucks, package_table):
-    # I am going to need to implement the delivery algo here
+# I am going to need to implement the delivery algo here
     pass
 
+#chests status of package
 def check_package_status(package_table, package_id, time):
-    # I am going to need to implement my package check here
-    pass
+        package = package_table.lookup(package_id)
+        if package:
+            status = get_status_at_time(package, time)
+            print(f"Package {package_id} status at {time}: {status}")
+        else:
+            print(f"Package {package_id} not found")
 
 # implements a viewer for total mileage of the trucks
 def view_total_mileage(trucks):
@@ -33,27 +35,26 @@ def view_total_mileage(trucks):
     print(f"Total Mileage for all trucks: {total_mileage:.1f} miles")
 
 def main():
-    # initialization of hash table
-    package_table = HashTable(40)
+# initialization of hash table
+    package_table = HashTable(csv_filename="WGUPS Package File.csv")
 
-    # loading package and distance data from file
-    load_package_data("WGUPS Package File.csv", package_table)
+#loads distance data from file
     load_distance_data("WGUPS Distance Table.csv")
 
-    # daily start time for the trucks
+# daily start time for the trucks
     start_time = datetime(2024, 10, 11, 8, 0)
 
-    # initialize the trucks
+# initialize the trucks
     trucks = initialize_trucks(start_time)
 
-    # returns truck information
+# returns truck information
     for truck in trucks:
         print(truck)
 
-    # begin the program
+# begin the program
     simulation_run = False
 
-    # this is the CLI
+# this is the CLI
     while True:
         print("\nWGUPS Package Delivery System")
         if not simulation_run:
@@ -63,13 +64,13 @@ def main():
         print("4. Exit")
         choice = input("Enter your choice: ")
 
-        # this tells users if the simulation has been run, and is not visible once it has been run, as it can only be run once
+# this tells users if the simulation has been run, and is not visible once it has been run, as it can only be run once
         if choice == '1' and not simulation_run:
             deliver_packages(trucks, package_table)
             print("Delivery simulation completed.")
             simulation_run = True
 
-        # this allows users to check the delivery info for a package at a given time, if the simulation has been run
+# this allows users to check the delivery info for a package at a given time, if the simulation has been run
         elif choice == '2':
             if simulation_run:
                 package_id = input("Enter package ID: ")
@@ -78,14 +79,14 @@ def main():
             else:
                 print("Please run the simulation first.")
 
-        # this allows users to check the mileage of the trucks at a given time, if the simulation has been run
+# this allows users to check the mileage of the trucks at a given time, if the simulation has been run
         elif choice == '3':
             if simulation_run:
                 view_total_mileage(trucks)
             else:
                 print("Please run the simulation first.")
 
-        # this ends the program, and includes a break statement for the overall loop for error handling
+# this ends the program, and includes a break statement for the overall loop for error handling
         elif choice == '4':
             print("Exiting program.")
             break
