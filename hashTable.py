@@ -1,6 +1,6 @@
 class HashTable:
 #initializes the hash table object
-    def __init__(self, initial_size=8):
+    def __init__(self, initial_size=40):
         self.size = initial_size
         self.count = 0
         self.table = [[] for _ in range(self.size)]
@@ -58,6 +58,18 @@ class HashTable:
             if item[0] == key:
                 return True
         return False
+#inserts the packages from the csv into the hash table
+    def insert_package(self, id, address, deadline, city,
+                       zipcode, weight, status):
+        package_data = {
+            'id' : id,
+            'address': address,
+            'deadline': deadline,
+            'city': city,
+            'zipcode': zipcode,
+            'weight': weight,
+            'status': status
+        }
 
 #returns the hash table
     def __str__(self):

@@ -7,6 +7,8 @@ from truck import Truck
 from loader import load_package_data, load_distance_data
 from deliveryAlgorithm import deliver_packages
 
+def load
+
 def initialize_trucks(start_time):
     truck1 = Truck(1, 16, 18, start_time)
     truck2 = Truck(2, 16, 18, start_time)
