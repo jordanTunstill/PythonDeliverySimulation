@@ -16,6 +16,7 @@ def load_trucks(trucks, package_table):
 # I will manually load the trucks here
     pass
 
+#this is the lookup package to ensure that package are being loaded
 def package_lookup(package_table, package_id):
     package = package_table.lookup(package_id)
     if package:
@@ -31,12 +32,12 @@ def package_lookup(package_table, package_id):
     else:
         return None
 
-#checks status of package
+#this checks the status of the packages, using the previous lookup package
 def check_package_status(package_table, package_id, time):
         package_information = package_lookup(package_table, package_id)
         if package_information:
-            status = package_information(package_delivery_status) #i still need to implement the actual checker.
-            print(f"Package {package_id} status at {time}: {status}")
+           # status = package_information(package_delivery_status) #i still need to implement the actual checker.
+           # print(f"Package {package_id} status at {time}: {status}")
             print(f"Delivery Address: {package_information['package_address']}")
             print(f"Delivery Deadline: {package_information['deadline']}")
             print(f"Delivery City: {package_information['city']}")
