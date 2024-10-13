@@ -16,18 +16,40 @@ def load_trucks(trucks, package_table):
 # I will manually load the trucks here
     pass
 
+def package_lookup(package_table, package_id):
+    package = package_table.lookup(package_id)
+    if package:
+        return {
+            'package_address': package['address'],
+            'deadline': package['deadline'],
+            'city': package['city'],
+            'zipcode': package['zipcode'],
+            'weight': package['weight'],
+            'status': package['status'],
+            'special_notes': package['special_notes']
+        }
+    else:
+        return None
+
+#checks status of package
+def check_package_status(package_table, package_id, time):
+        package_information = package_lookup(package_table, package_id)
+        if package_information:
+            status = package_information(package_delivery_status) #i still need to implement the actual checker.
+            print(f"Package {package_id} status at {time}: {status}")
+            print(f"Delivery Address: {package_information['package_address']}")
+            print(f"Delivery Deadline: {package_information['deadline']}")
+            print(f"Delivery City: {package_information['city']}")
+            print(f"Delivery Zipcode: {package_information['zipcode']}")
+            print(f"Delivery Weight: {package_information['weight']}")
+            print(f"Delivery Status: {package_information['status']}")
+            print(f"Delivery Special Notes: {package_information['special_notes']}")
+        else:
+            print(f"Package {package_id} not found")
+
 def deliver_packages(trucks, package_table):
 # I am going to need to implement the delivery algo here
     pass
-
-#chests status of package
-def check_package_status(package_table, package_id, time):
-        package = package_table.lookup(package_id)
-        if package:
-            status = get_status_at_time(package, time)
-            print(f"Package {package_id} status at {time}: {status}")
-        else:
-            print(f"Package {package_id} not found")
 
 # implements a viewer for total mileage of the trucks
 def view_total_mileage(trucks):
