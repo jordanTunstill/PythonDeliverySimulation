@@ -12,7 +12,7 @@ class Truck:
         self.current_time = start_time
         self.available_time = start_time
 
-#implenments removal of packages. Will be manually loading trucks
+#implements removal of packages. Will be manually loading trucks
         def remove_package(self, package):
             if package in self.packages:
                 self.packages.remove(package)
@@ -21,7 +21,7 @@ class Truck:
 
 #implements delivery of packages
         def deliver_package(self, package, distance):
-            travel_time = timedelta(minutes = distance/self.speed)
+            travel_time = timedelta(hours = distance/self.speed)
             self.current_time += travel_time
             self.milage += distance
             self.current_location = package.destination
@@ -30,7 +30,7 @@ class Truck:
 
 #implements returning to the hub
         def return_to_hub(self, distance_to_hub):
-            travel_time = timedelta(minutes = distance_to_hub / self.speed)
+            travel_time = timedelta(hours = distance_to_hub / self.speed)
             self.current_time += travel_time
             self.mileage += distance_to_hub
             self.current_location = "HUB"

@@ -101,7 +101,7 @@ class HashTable:
                     status = 'At hub'
                     special_note = row[7] if len(row) > 7 else ''
 
-# this is temporary to test this hash table
+# This shows that the table worked
                     self.insert_package(package_id, address, deadline, city, state,
                                         zipcode, weight, status, special_note)
                     print(f"Inserted package {package_id}")
@@ -113,10 +113,10 @@ class HashTable:
             print(f"Error reading CSV file: {e}")
         except ValueError as e:
             print(f"Error parsing data: {e}")
-            print(f"Problematic row: {row}")
+            print(f"Problem in row: {row}")
         except Exception as e:
             print(f"Unexpected error: {e}")
-            print(f"Problematic row: {row}")
+            print(f"Problem in row: {row}")
 
 
     def __str__(self):
