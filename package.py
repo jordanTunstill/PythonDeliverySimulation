@@ -32,6 +32,12 @@ class Package:
             return "EN ROUTE"
         else:
             return "AT HUB"
+
+#special handling for package 9
+    def get_current_address(package, current_time):
+        if package['id'] == 9 and current_time.time() >= datetime.strptime("10:20", "%H:%M").time():
+            return '410 S State St, Salt Lake City, UT 84111'
+        return package['address']
 #returns information about the given package
     def __str__(self):
         status_str = f"Status: {self.status}"

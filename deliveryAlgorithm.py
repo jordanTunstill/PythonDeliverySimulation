@@ -45,6 +45,11 @@ def load_distances(distance_file):
 addresses = load_addresses("WGUPS-Addresses.csv")
 distances = load_distances("WGUPS-Distance-Table-Filled.csv")
 
+def get_current_address(package, current_time):
+    if package['id'] == 9 and current_time.time() >= datetime.strptime("10:20", "%H:%M").time():
+        return '410 S State St, Salt Lake City, UT 84111'
+    return package['address']
+
 def find_nearest_package(current_location, undelivered_packages, package_table, distances, addresses):
     return min(undelivered_packages,
                key=lambda pid: calculate_distance(current_location, package_table.lookup(pid)['address'], distances, addresses))
@@ -56,28 +61,30 @@ def deliver_packages(trucks, package_table, distances, addresses):
         truck.current_location = hub_address
         print(f"Truck {truck.id} leaving the hub to start deliveries at {truck.current_time.strftime('%I:%M %p')}")
 
+        # Set departure time and status for all packages on this truck
+        for package_id in truck.packages:
+            package = package_table.lookup(package_id)
+            if package is not None:
+                package['status'] = 'En Route'
+                package['departure_time'] = truck.current_time
+                package['assigned_truck'] = truck.id
+
         while truck.packages:
             nearest_package_id = find_nearest_package(truck.current_location, truck.packages, package_table, distances, addresses)
             package = package_table.lookup(nearest_package_id)
-
-            distance = calculate_distance(truck.current_location, package['address'], distances, addresses)
+            current_address = get_current_address(package, truck.current_time)
+            distance = calculate_distance(truck.current_location, current_address, distances, addresses)
             travel_time = timedelta(hours=distance / truck.speed)
 
             # Update current time before delivery
             truck.current_time += travel_time
             truck.mileage += distance
-            truck.current_location = package['address']
-
-            # Special rule for package 9
-            if nearest_package_id == 9 and truck.current_time < datetime.strptime("10:20 AM", "%I:%M %p"):
-                truck.current_time = datetime.strptime("10:20 AM", "%I:%M %p")
-                package['address'] = "410 S State St., Salt Lake City, UT 84111"
+            truck.current_location = current_address
 
             package['status'] = 'Delivered'
             package['delivery_time'] = truck.current_time
 
-            print(
-                f"Truck {truck.id} delivered package {nearest_package_id} at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}")
+            print(f"Truck {truck.id} delivered package {nearest_package_id} at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}")
             truck.packages.remove(nearest_package_id)
 
         # Return to hub
@@ -86,5 +93,4 @@ def deliver_packages(trucks, package_table, distances, addresses):
         truck.mileage += distance_to_hub
         truck.current_time += travel_time_to_hub
         truck.current_location = hub_address
-        print(
-            f"Truck {truck.id} completed deliveries and returned to hub at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}. Total mileage: {truck.mileage:.1f}")
+        print(f"Truck {truck.id} completed deliveries and returned to hub at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}. Total mileage: {truck.mileage:.1f}")

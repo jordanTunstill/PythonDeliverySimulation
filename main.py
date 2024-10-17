@@ -4,13 +4,13 @@ from hashTable import HashTable
 from package import Package
 from truck import Truck
 from loader import load_distance_data
-from deliveryAlgorithm import deliver_packages
+from deliveryAlgorithm import deliver_packages, get_current_address
 
 
 def initialize_trucks(start_time):
     start_time1 = datetime(2024, 10, 11, 8, 0)   # 8:00 AM
-    start_time2 = datetime(2024, 10, 11, 9, 5)   # 9:05 AM
-    start_time3 = datetime(2024, 10, 11, 10, 20) # 10:20 AM
+    start_time2 = datetime(2024, 10, 11, 9, 1)   # 9:05 AM
+    start_time3 = datetime(2024, 10, 11, 10, 21) # 10:20 AM
 
     return [
         Truck(1, 16, 18, start_time1),
@@ -37,27 +37,91 @@ def package_lookup(package_table, package_id):
 
 
 def load_trucks(trucks, package_table):
-    trucks[0].packages = [1, 13, 14, 15, 16, 19, 20, 21, 31, 4, 40, ]
-    trucks[1].packages = [3, 18, 36, 38, 29, 30, 34, 8, 37, 5, 7, 39, 33, 25, 28]
-    trucks[2].packages = [9, 2, 10, 11, 12, 17, 22, 32, 6, 23, 24, 26, 27, 35]
+    trucks[0].packages = [1, 13, 14, 15, 16, 19, 20, 21, 31, 4, 40, 39, 8, 30, 37]
+    trucks[1].packages = [3, 6, 18, 36, 38, 29, 34, 5, 7, 33, 25, 28]
+    trucks[2].packages = [9, 2, 10, 11, 12, 17, 22, 32, 23, 24, 26, 27, 35]
 
 
 # this checks the status of the packages, using the previous lookup package
-def check_package_status(package_table, package_id, time):
-    package_information = package_lookup(package_table, package_id)
-    if package_information:
-        # status = package_information(package_delivery_status) #i still need to implement the actual checker.
-        # print(f"Package {package_id} status at {time}: {status}")
-        print(f"Delivery Address: {package_information['package_address']}")
-        print(f"Delivery Deadline: {package_information['deadline']}")
-        print(f"Delivery City: {package_information['city']}")
-        print(f"Delivery Zipcode: {package_information['zipcode']}")
-        print(f"Delivery Weight: {package_information['weight']}")
-        print(f"Delivery Status: {package_information['status']}")
-        print(f"Delivery Special Notes: {package_information['special_notes']}")
-    else:
-        print(f"Package {package_id} not found")
+def check_package_status(package_table, check_time):
+    while True:
+        try:
+            package_id = int(input("Enter package ID (or 0 to return to main menu): "))
+            if package_id == 0:
+                return  # This will exit the function and return to the main menu
 
+            package = package_table.lookup(package_id)
+            if package is None:
+                print(f"Package with ID {package_id} not found.")
+                continue
+
+            # Determine status based on times and stored status
+            current_address = get_current_address(package, check_time)
+            status = package['status']
+            if status == 'Delivered' and check_time < package['delivery_time']:
+                status = 'En Route' if check_time >= package.get('departure_time', check_time) else 'At Hub'
+
+            print(f"\nPackage {package_id} status at {check_time.strftime('%Y-%m-%d %I:%M:%S %p')}:")
+            print(f"Address: {current_address}")
+            print(f"Deadline: {package['deadline']}")
+            print(f"City: {package['city']}")
+            print(f"Zip Code: {package['zipcode']}")
+            print(f"Weight: {package['weight']}")
+            print(f"Status: {status}")
+
+            if package['special_note']:
+                print(f"Special Notes: {package['special_note']}")
+
+            if status == "Delivered":
+                print(f"Delivered at: {package['delivery_time'].strftime('%Y-%m-%d %I:%M:%S %p')}")
+            elif status == "En Route" and 'departure_time' in package:
+                print(f"Departed at: {package['departure_time'].strftime('%Y-%m-%d %I:%M:%S %p')}")
+
+            # Ask if the user wants to check another package
+            another = input("\nDo you want to check another package? (y/n): ").lower()
+            if another != 'y':
+                return  # This will exit the function and return to the main menu
+
+        except ValueError:
+            print("Invalid input. Please enter a valid package ID.")
+
+
+def show_packages_status_on_trucks(trucks, package_table, check_time):
+    print(f"\nPackage Status at {check_time.strftime('%Y-%m-%d %I:%M:%S %p')}:\n")
+
+    # Create a dictionary to group packages by truck
+    packages_by_truck = {truck.id: [] for truck in trucks}
+
+    # Iterate through all packages and assign them to trucks
+    for package_id in range(1, 41):
+        package = package_table.lookup(package_id)
+        if package is None:
+            continue
+
+        # Determine current status
+        if package.get('delivery_time') and check_time >= package['delivery_time']:
+            status = "DELIVERED"
+            extra_info = f", Delivered at: {package['delivery_time'].strftime('%Y-%m-%d %I:%M:%S %p')}"
+        elif package.get('departure_time') and check_time >= package['departure_time']:
+            status = "EN ROUTE"
+            extra_info = f", Departed at: {package['departure_time'].strftime('%Y-%m-%d %I:%M:%S %p')}"
+        else:
+            status = "AT HUB"
+            extra_info = ""
+
+        truck_id = package.get('assigned_truck')
+        packages_by_truck[truck_id].append((package_id, status, extra_info))
+
+    # Display packages for each truck
+    for truck_id, packages in packages_by_truck.items():
+        print(f"Truck {truck_id}:")
+
+        if not packages:
+            print("  No packages")
+        else:
+            for package_id, status, extra_info in packages:
+                print(f"  Package {package_id}: {status}{extra_info}")
+        print()
 
 # implements a viewer for total mileage of the trucks
 def view_total_mileage(trucks):
@@ -95,9 +159,10 @@ def main():
         print("\nWGUPS Package Delivery System")
         if not simulation_run:
             print("1. Start delivery simulation")
-        print("2. Check package status")
-        print("3. View total mileage")
-        print("4. Exit")
+        print("2. Check individual package information")
+        print("3. Check packages on each truck")
+        print("4. View total mileage")
+        print("5. Exit")
         choice = input("Enter your choice: ")
 
         # this tells users if the simulation has been run, and is not visible once it has been run, as it can only be run once
@@ -108,22 +173,45 @@ def main():
 
         # this allows users to check the delivery info for a package at a given time, if the simulation has been run
         elif choice == '2':
+            check_time_str = input("Enter time to check status (HH:MM): ")
+            if not check_time_str:
+                print("No time entered. Returning to main menu.")
+                continue
+
+            try:
+                check_time = datetime.strptime(check_time_str, '%H:%M')
+                check_time = check_time.replace(year=2024, month=10, day=11)
+            except ValueError:
+                print("Invalid time format. Please use HH:MM.")
+                continue
+
             if simulation_run:
-                package_id = input("Enter package ID: ")
-                time = input("Enter time (HH:MM): ")
-                check_package_status(package_table, package_id, time)
+                check_package_status(package_table, check_time)
+            else:
+                print("Please run the simulation first.")
+
+        elif choice == '3':
+            if simulation_run:
+                check_time_str = input("Enter time to check status (HH:MM): ")
+                try:
+                    check_time = datetime.strptime(check_time_str, '%H:%M')
+                    check_time = check_time.replace(year=2024, month=10,
+                                                    day=11)  # Use the same date as in your simulation
+                    show_packages_status_on_trucks(trucks, package_table, check_time)
+                except ValueError:
+                    print("Invalid time format. Please use HH:MM.")
             else:
                 print("Please run the simulation first.")
 
         # this allows users to check the mileage of the trucks at a given time, if the simulation has been run
-        elif choice == '3':
+        elif choice == '4':
             if simulation_run:
                 view_total_mileage(trucks)
             else:
                 print("Please run the simulation first.")
 
         # this ends the program, and includes a break statement for the overall loop for error handling
-        elif choice == '4':
+        elif choice == '5':
             print("Exiting program.")
             break
         else:
