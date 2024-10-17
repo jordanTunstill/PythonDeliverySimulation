@@ -65,13 +65,18 @@ def main():
     package_table = HashTable(csv_filename="WGUPS Package File.csv")
 
     # loads distance data from file
-    distances, locations = load_distance_data("WGUPS-Distance-Table-Filled.csv")
+    distances, locations, location_to_index = load_distance_data("WGUPS-Distance-Table-Filled.csv",
+                                                                 "WGUPS-Addresses.csv")
+    #loads address data from file
 
     # daily start time for the trucks
     start_time = datetime(2024, 10, 11, 8, 0)
 
     # initialize the trucks
     trucks = initialize_trucks(start_time)
+
+    #loads the trucks
+    load_trucks(trucks, package_table)
 
     # returns truck information
     for truck in trucks:
@@ -92,7 +97,7 @@ def main():
 
         # this tells users if the simulation has been run, and is not visible once it has been run, as it can only be run once
         if choice == '1' and not simulation_run:
-            deliver_packages(trucks, package_table, distances, locations)
+            deliver_packages(trucks, package_table, distances, locations, location_to_index)
             print("Delivery simulation completed.")
             simulation_run = True
 
