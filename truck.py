@@ -1,4 +1,4 @@
-#initializes the truck object
+#this initializes the truck object
 class Truck:
     def __init__(self, truck_id, capacity, speed, start_time):
         self.id = truck_id
@@ -11,6 +11,7 @@ class Truck:
         self.available_time = start_time
         self.departure_time = None
 
+#this may be outdated by similar language in the deliveryAlgorithm file, but it works in tandem.
     def leave_hub(self):
         self.departure_time = self.available_time
         print(f"Truck {self.id} leaving the hub to start deliveries at {self.departure_time.strftime('%I:%M %p')}")

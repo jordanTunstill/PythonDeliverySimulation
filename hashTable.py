@@ -1,7 +1,7 @@
 import csv
 
 class HashTable:
-# initializes the hash table object
+#this initializes the hash table object
     def __init__(self, initial_size=40, csv_filename=None):
         self.size = initial_size
         self.count = 0
@@ -10,11 +10,11 @@ class HashTable:
         if csv_filename:
             self.read_csv(csv_filename)
 
-# generates the hash index for the given key
+#this generates the hash index for the given key
     def _hash(self, key):
         return hash(key) % self.size
 
-# resizes the hash index as needed
+#this resizes the hash index as needed
     def _resize(self, new_size):
         old_table = self.table
         self.size = new_size
@@ -24,7 +24,7 @@ class HashTable:
             for key, value in bucket:
                 self.insert(key, value)
 
-# inserts the key pair into the hash table
+#this inserts the key pair into the hash table
     def insert(self, key, value):
         if self.count / self.size >= self.load_factor_threshold:
             self._resize(self.size * 2)
@@ -37,7 +37,7 @@ class HashTable:
         self.table[hash_index].append([key, value])
         self.count += 1
 
-# retrieves the value associated with the given key
+#this retrieves the value associated with the given key
     def lookup(self, key):
         hash_index = self._hash(key)
         for item in self.table[hash_index]:
@@ -45,7 +45,7 @@ class HashTable:
                 return item[1]
         return None
 
-# removes a key-value pair from the hash table
+#this removes a key-value pair from the hash table
     def remove(self, key):
         hash_index = self._hash(key)
         for i, item in enumerate(self.table[hash_index]):
@@ -55,7 +55,7 @@ class HashTable:
                 return True
         return False
 
-# checks if the hash table contains a key
+#this checks if the hash table contains a key
     def contains(self, key):
         hash_index = self._hash(key)
         for item in self.table[hash_index]:
@@ -63,7 +63,7 @@ class HashTable:
                 return True
         return False
 
-# inserts the packages from the csv into the hash table
+#this inserts the packages from the csv into the hash table
     def insert_package(self, id, address, deadline, city,
                        state, zipcode, weight, status, special_note=''):
         package_data = {
@@ -79,7 +79,7 @@ class HashTable:
         }
         self.insert(id, package_data)
 
-# reads the csv file and imports the data to the hash table
+#this reads the csv file and imports the data to the hash table
     def read_csv(self, filename):
         try:
             print(f"Attempting to read file: {filename}")
@@ -101,7 +101,7 @@ class HashTable:
                     status = 'At hub'
                     special_note = row[7] if len(row) > 7 else ''
 
-# This shows that the table worked
+#this shows that the table worked
                     self.insert_package(package_id, address, deadline, city, state,
                                         zipcode, weight, status, special_note)
                     print(f"Inserted package {package_id, address}")

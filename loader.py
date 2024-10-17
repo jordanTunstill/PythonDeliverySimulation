@@ -1,10 +1,11 @@
 import codecs
 
+#this is used to load the distance and address data into the project, from the csv files
 def load_distance_data(distance_file, address_file):
     distances = {}
     addresses = {}
 
-    # Load the address data
+#this loads the address data
     with codecs.open(address_file, mode='r', encoding='utf-8-sig') as infile:
         for line in infile:
             parts = line.strip().split(',')
@@ -12,10 +13,10 @@ def load_distance_data(distance_file, address_file):
                 index, name, address = parts
                 addresses[int(index)] = f"{name}, {address}"
 
-    # Load the distance data
+#this loads the distance data
     with codecs.open(distance_file, mode='r', encoding='utf-8-sig') as infile:
         for i, line in enumerate(infile):
-            # Split by comma and convert to float
+#this splits the data by comma and convert to float
             distances[i] = [float(value) for value in line.strip().split(',') if value.strip()]
 
     print('Successfully loaded addresses and distances')
