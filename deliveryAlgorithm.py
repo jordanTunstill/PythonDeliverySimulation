@@ -32,11 +32,12 @@ def find_nearest_package(current_location, undelivered_packages, package_table, 
                key=lambda pid: calculate_distance(current_location, package_table.lookup(pid)['address'], distances))
 
 
-def deliver_packages(trucks, package_table, distances, locations, location_to_index):
-    hub_address = locations[0]  # Assuming the hub is the first location
+def deliver_packages(trucks, package_table, distances, locations):
+    hub_address = "Western Governors University\n4001 South 700 East, \nSalt Lake City, UT 84107"  # Assuming the hub is the first location
 
     for truck in trucks:
         truck.current_location = hub_address
+        truck.leave_hub()
         while truck.packages:
             nearest_package_id = find_nearest_package(truck.current_location, truck.packages, package_table, distances)
             package = package_table.lookup(nearest_package_id)
@@ -53,6 +54,10 @@ def deliver_packages(trucks, package_table, distances, locations, location_to_in
 
             truck.packages.remove(nearest_package_id)
             print(f"Truck {truck.id} delivered package {nearest_package_id} at {truck.current_time}")
+
+#special rule for package 9, to account for the right address being found after 10:20
+            if nearest_package_id == 9 and truck.current_time >= datetime.strptime("10:20 AM", "%I:%M %p"):
+                package['address'] = "410 S State St., Salt Lake City, UT 84111"
 
         distance_to_hub = calculate_distance(truck.current_location, hub_address, distances)
         truck.mileage += distance_to_hub

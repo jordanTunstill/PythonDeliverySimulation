@@ -35,6 +35,6 @@ def load_distance_data(distance_file, address_file):
                 locations[j]: float(value) if value.strip() else 0.0
                 for j, value in enumerate(row) if j != i
             }
-
+    print(f"Successfully loaded addresses and distances")
     return distances, locations, location_to_index
 

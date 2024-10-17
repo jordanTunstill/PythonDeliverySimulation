@@ -104,7 +104,7 @@ class HashTable:
 # This shows that the table worked
                     self.insert_package(package_id, address, deadline, city, state,
                                         zipcode, weight, status, special_note)
-                    print(f"Inserted package {package_id}")
+                    print(f"Inserted package {package_id, address}")
 
             print(f"Successfully loaded {self.count} packages from {filename}")
         except FileNotFoundError:

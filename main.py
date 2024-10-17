@@ -7,11 +7,15 @@ from deliveryAlgorithm import deliver_packages
 
 
 def initialize_trucks(start_time):
-    hub_address = "western governors university 4001 south 700 east, salt lake city, ut 84107"
-    truck1 = Truck(1, 16, 18, start_time)
-    truck2 = Truck(2, 16, 18, start_time)
-    truck3 = Truck(3, 16, 18, start_time)
-    return [truck1, truck2, truck3]
+    start_time1 = datetime(2024, 10, 11, 8, 0)   # 8:00 AM
+    start_time2 = datetime(2024, 10, 11, 9, 5)   # 9:05 AM
+    start_time3 = datetime(2024, 10, 11, 10, 20) # 10:20 AM
+
+    return [
+        Truck(1, 16, 18, start_time1),
+        Truck(2, 16, 18, start_time2),
+        Truck(3, 16, 18, start_time3)
+    ]
 
 
 # this is the lookup package to ensure that package are being loaded
@@ -33,8 +37,8 @@ def package_lookup(package_table, package_id):
 
 def load_trucks(trucks, package_table):
     trucks[0].packages = [1, 13, 14, 15, 16, 19, 20, 21, 31, 4, 40, ]
-    trucks[1].packages = [3, 18, 36, 38, 29, 30, 34, 8, 37, 5, 7, 39, 33]
-    trucks[2].packages = [9, 2, 10, 11, 12, 17, 22, 25, 28, 32, 6, 23, 24, 26, 27, 35]
+    trucks[1].packages = [3, 18, 36, 38, 29, 30, 34, 8, 37, 5, 7, 39, 33, 25, 28]
+    trucks[2].packages = [9, 2, 10, 11, 12, 17, 22, 32, 6, 23, 24, 26, 27, 35]
 
 
 # this checks the status of the packages, using the previous lookup package
@@ -80,7 +84,7 @@ def main():
 
     # returns truck information
     for truck in trucks:
-        print(truck)
+        print(f"Truck {truck.id}: {len(truck.packages)}/{truck.capacity} packages, {truck.mileage:.1f} miles")
 
     # begin the program
     simulation_run = False
@@ -97,7 +101,7 @@ def main():
 
         # this tells users if the simulation has been run, and is not visible once it has been run, as it can only be run once
         if choice == '1' and not simulation_run:
-            deliver_packages(trucks, package_table, distances, locations, location_to_index)
+            deliver_packages(trucks, package_table, distances, locations)
             print("Delivery simulation completed.")
             simulation_run = True
 

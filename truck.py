@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+
 
 #initializes the truck object
 class Truck:
@@ -11,30 +11,11 @@ class Truck:
         self.mileage = 0.0
         self.current_time = start_time
         self.available_time = start_time
+        self.departure_time = None
 
-#implements removal of packages. Will be manually loading trucks
-        def remove_package(self, package):
-            if package in self.packages:
-                self.packages.remove(package)
-                return True
-            return False
-
-#implements delivery of packages
-        def deliver_package(self, package, distance):
-            travel_time = timedelta(hours = distance/self.speed)
-            self.current_time += travel_time
-            self.milage += distance
-            self.current_location = package.destination
-            package.deliver(self.current_time)
-            self.packages.remove(package)
-
-#implements returning to the hub
-        def return_to_hub(self, distance_to_hub):
-            travel_time = timedelta(hours = distance_to_hub / self.speed)
-            self.current_time += travel_time
-            self.mileage += distance_to_hub
-            self.current_location = "HUB"
-            self.available_time = self.current_time
+    def leave_hub(self):
+        self.departure_time = self.available_time
+        print(f"Truck {self.id} leaving the hub to start deliveries at {self.departure_time.strftime('%I:%M %p')}")
 
 #returns truck id, how many packages it has, how full it is, and how far it has driven
         def __str__(self):
