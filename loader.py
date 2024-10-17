@@ -1,40 +1,22 @@
-import csv
+import codecs
 
 def load_distance_data(distance_file, address_file):
     distances = {}
-    locations = []
-    location_to_index = {}
+    addresses = {}
 
-    def normalize_address(address):
-        return ' '.join(address.split()).strip().lower()
+    # Load the address data
+    with codecs.open(address_file, mode='r', encoding='utf-8-sig') as infile:
+        for line in infile:
+            parts = line.strip().split(',')
+            if len(parts) == 3:
+                index, name, address = parts
+                addresses[int(index)] = f"{name}, {address}"
 
-    # Load locations first
-    with open(address_file, mode='r') as infile:
-        content = infile.read()
-        address_entries = content.split('"')[1::2]  # Split by quotes and take every other item
+    # Load the distance data
+    with codecs.open(distance_file, mode='r', encoding='utf-8-sig') as infile:
+        for i, line in enumerate(infile):
+            # Split by comma and convert to float
+            distances[i] = [float(value) for value in line.strip().split(',') if value.strip()]
 
-        for index, entry in enumerate(address_entries):
-            lines = entry.strip().split('\n')
-            if len(lines) >= 2:
-                location = lines[0].strip()
-                address = ' '.join(line.strip() for line in lines[1:])
-                normalized_address = normalize_address(f"{location}, {address}")
-                locations.append(normalized_address)
-                location_to_index[normalized_address] = index
-            else:
-                print(f"Warning: Invalid address entry: {entry}")
-
-    # Load distance data
-    with open(distance_file, mode='r') as infile:
-        reader = csv.reader(infile)
-        headers = next(reader)
-
-        for i, row in enumerate(reader):
-            from_location = locations[i]
-            distances[from_location] = {
-                locations[j]: float(value) if value.strip() else 0.0
-                for j, value in enumerate(row) if j != i
-            }
-    print(f"Successfully loaded addresses and distances")
-    return distances, locations, location_to_index
-
+    print('Successfully loaded addresses and distances')
+    return distances, addresses, {v: k for k, v in addresses.items()}

@@ -1,5 +1,3 @@
-
-
 #initializes the truck object
 class Truck:
     def __init__(self, truck_id, capacity, speed, start_time):
