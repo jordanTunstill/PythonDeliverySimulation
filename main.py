@@ -9,7 +9,7 @@ from deliveryAlgorithm import deliver_packages, get_current_address
 #this gives my trucks different start times
 def initialize_trucks(start_time):
     start_time1 = datetime(2024, 10, 11, 8, 0)   # 8:00 AM
-    start_time2 = datetime(2024, 10, 11, 9, 1)   # 9:01 AM
+    start_time2 = datetime(2024, 10, 11, 9, 6)   # 9:06 AM
     start_time3 = datetime(2024, 10, 11, 10, 21) # 10:21 AM
 
     return [
@@ -62,18 +62,18 @@ def check_package_status(package_table, check_time):
                 status = 'En Route' if check_time >= package.get('departure_time', check_time) else 'At Hub'
 
             print(f"\nPackage {package_id} status at {check_time.strftime('%Y-%m-%d %I:%M:%S %p')}:")
-            print(f"Address: {current_address}")
-            print(f"Deadline: {package['deadline']}")
-            print(f"City: {package['city']}")
-            print(f"Zip Code: {package['zipcode']}")
-            print(f"Weight: {package['weight']}")
-            print(f"Status: {status}")
+            print(f"Delivery Address: {current_address}")
+            print(f"Delivery Deadline: {package['deadline']}")
+            print(f"Delivery City: {package['city']}")
+            print(f"Delivery Zip Code: {package['zipcode']}")
+            print(f"Delivery Weight: {package['weight']}")
+            print(f"Delivery Status: {status}")
 
             if package['special_note']:
                 print(f"Special Notes: {package['special_note']}")
 
             if status == "Delivered":
-                print(f"Delivered at: {package['delivery_time'].strftime('%Y-%m-%d %I:%M:%S %p')}")
+                print(f"Delivered to {current_address} at: {package['delivery_time'].strftime('%Y-%m-%d %I:%M:%S %p')}")
             elif status == "En Route" and 'departure_time' in package:
                 print(f"Departed at: {package['departure_time'].strftime('%Y-%m-%d %I:%M:%S %p')}")
 

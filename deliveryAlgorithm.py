@@ -5,7 +5,7 @@ import codecs
 #this calculates the closest location for the nearest neighbor algorithm
 def calculate_distance(address1, address2, distances, addresses):
     def find_address_index(address):
-#this removes apartment numbers and zip codes for matching, to avoid errors
+#this removes zip codes for matching, to avoid errors
         simplified_address = ' '.join(address.split(',')[0].split()[:-1]).lower()
         for index, full_address in addresses.items():
             if simplified_address in full_address.lower():
@@ -49,7 +49,7 @@ distances = load_distances("WGUPS-Distance-Table-Filled.csv")
 #this finds the current address. It also accounts for special package 9, as that address is updated at 10:20
 def get_current_address(package, current_time):
     if package['id'] == 9 and current_time.time() >= datetime.strptime("10:20", "%H:%M").time():
-        return '410 S State St, Salt Lake City, UT 84111'
+        return '410 S State St'
     return package['address']
 
 #this uses the calculate_distance function to figure out which package is the closest.
@@ -93,7 +93,7 @@ def deliver_packages(trucks, package_table, distances, addresses):
             package['status'] = 'Delivered'
             package['delivery_time'] = truck.current_time
 
-            print(f"Truck {truck.id} delivered package {nearest_package_id} at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}")
+            print(f"Truck {truck.id} delivered package {nearest_package_id} to {truck.current_location} at {truck.current_time.strftime('%Y-%m-%d %I:%M:%S %p')}")
             truck.packages.remove(nearest_package_id)
 
 #this allows the truck to return to hub when done with deliveries
