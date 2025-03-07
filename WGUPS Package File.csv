@@ -38,8 +38,3 @@
 38,410 S State St,Salt Lake City,UT,84111,EOD,9,Can only be on truck 2
 39,2010 W 500 S,Salt Lake City,UT,84104,EOD,9,
 40,380 W 2880 S,Salt Lake City,UT,84115,10:30 AM,45,
-[default]
-aws_access_key_id = AKIAT4GVSAXXMSNNXOSA
-aws_secret_access_key = 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
-output = json
-region = us-east-2
